@@ -17,6 +17,53 @@ describe('Imager.js HTML data-* API', function () {
         cleanFixtures(fixtures);
     });
 
+    describe('CSS Background Support', function () {
+      it('should not replace divs with images', function (done) {
+        fixtures = loadFixtures('data-src-new');
+        var imgr = new Imager({cssBackgrounds: true, availableWidths: [640, 320]});
+
+        imgr.ready(function () {
+          applyEach(imgr.divs, function (el) {
+            expect(el).to.have.property('nodeName', 'DIV');
+          });
+
+          done();
+        });
+      });
+
+      it('should apply a css class to cssBackground enables divs', function (done) {
+        fixtures = loadFixtures('data-src-new');
+        var imgr = new Imager({cssBackgrounds: true, availableWidths: [640, 320]});
+
+        imgr.ready(function () {
+          applyEach(imgr.divs, function (el) {
+            expect(el.className).to.equal('bg-responsive-img image-replace');
+          });
+
+          done();
+        });
+      });
+
+      it('should set the inline background-image', function (done) {
+        fixtures = loadFixtures('data-src-new');
+        var imgr = new Imager({cssBackgrounds: true, availableWidths: [640, 320]});
+
+        imgr.ready(function () {
+            var src = applyEach(imgr.divs, function (el) {
+                return el.getAttribute('style');
+            });
+
+            expect(src).to.eql([
+              'background-image: url(http://localhost:9876/base/test/fixtures/media/C-640.jpg); ',
+              'background-image: url(http://localhost:9876/base/test/fixtures/media/B-640.jpg); ',
+              'background-image: url(http://localhost:9876/base/test/fixtures/media-640/fillmurray.jpg); '
+            ]);
+
+            done();
+        });
+      });
+    });
+
     describe('handling {width} in data-src', function () {
         it('should not use RegExp anymore', function (done) {
             fixtures = loadFixtures('data-src-old');
