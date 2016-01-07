@@ -62,7 +62,7 @@ describe('Imager.js HTML data-* API', function () {
             done();
         });
       });
-      
+
       it('should work for both images and background images', function (done) {
         fixtures = loadFixtures('multiple');
         var images = document.querySelectorAll('.imager-image');
@@ -84,6 +84,22 @@ describe('Imager.js HTML data-* API', function () {
             done();
           });
 
+        });
+      });
+    });
+
+    describe('customising matcher for interpolation', function () {
+      it('should successfully resolve custom match expression', function (done) {
+        fixtures = loadFixtures('custom-matcher');
+        var imgr = new Imager({availableWidths: [320, 640], widthInterpolationSelector: 'xxwidthxx'});
+
+        imgr.ready(function () {
+          var src = applyEach(imgr.divs, function (el) {
+            return el.getAttribute('src');
+          });
+
+          expect(src).to.eql(['base/test/fixtures/media/C-640.jpg', 'base/test/fixtures/media/B-640.jpg', 'base/test/fixtures/media-320/fillmurray.jpg']);
+          done();
         });
       });
     });
